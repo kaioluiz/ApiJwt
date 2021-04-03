@@ -1,0 +1,1 @@
+Instalação do bcrypt e sua versão: npm install bcrypt@3.0.8

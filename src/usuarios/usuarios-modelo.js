@@ -1,13 +1,15 @@
 const usuariosDao = require('./usuarios-dao');
 const { InvalidArgumentError } = require('../erros');
 const validacoes = require('../validacoes-comuns');
+const bcrypt = require('bcrypt');
+
 
 class Usuario {
   constructor(usuario) {
     this.id = usuario.id;
     this.nome = usuario.nome;
     this.email = usuario.email;
-    this.senha = usuario.senha;
+    this.senhaHash = usuario.senha;
 
     this.valida();
   }
@@ -20,12 +22,17 @@ class Usuario {
     return usuariosDao.adiciona(this);
   }
 
+  async adicionaSenha(senha){
+    validacoes.campoStringNaoNulo(senha, 'senha');
+    validacoes.campoTamanhoMaximo(senha, 'senha', 64);    
+    validacoes.campoTamanhoMinimo(senha, 'senha', 8);
+    
+    this.senhaHash = await Usuario.gerarSenhaHash(senha);
+  }
+
   valida() {
     validacoes.campoStringNaoNulo(this.nome, 'nome');
     validacoes.campoStringNaoNulo(this.email, 'email');
-    validacoes.campoStringNaoNulo(this.senha, 'senha');
-    validacoes.campoTamanhoMinimo(this.senha, 'senha', 8);
-    validacoes.campoTamanhoMaximo(this.senha, 'senha', 64);
   }
 
   
@@ -53,6 +60,13 @@ class Usuario {
 
   static lista() {
     return usuariosDao.lista();
+  }
+
+
+  static gerarSenhaHash(senha){
+    //Tempo que a função ira demorar pra executar: Escalabilidade do hash gerado.
+    const custoHash = 12;
+    return bcrypt.hash(senha, custoHash);
   }
 }
 
