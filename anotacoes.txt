@@ -1,2 +1,8 @@
+JWT = Json Web token.
 Instalação do bcrypt e sua versão: npm install bcrypt@3.0.8
 
+Para criação do middleware de autenticação são utilizado dois pacotes : 
+
+npm install passport@0.4.1
+
+npm intall passport-local@1.0.0 
